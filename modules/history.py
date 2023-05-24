@@ -47,11 +47,11 @@ class ChatHistory:
                     )
                     message(st.session_state["assistant"][i], key=str(i), avatar_style="thumbs")
 
-    def load(self):
-        if os.path.exists(self.history_file):
-            with open(self.history_file, "r") as f:
-                self.history = f.read().splitlines()
-
-    def save(self):
-        with open(self.history_file, "w") as f:
-            f.write("\n".join(self.history))
+    # def load(self):
+    #     if os.path.exists(self.history_file):
+    #         with open(self.history_file, "r") as f:
+    #             self.history = f.read().splitlines()
+    #
+    # def save(self):
+    #     with open(self.history_file, "w") as f:
+    #         f.write("\n".join(self.history))

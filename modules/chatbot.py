@@ -1,9 +1,7 @@
 import streamlit as st
-from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts.prompt import PromptTemplate
-from langchain.chains import RetrievalQAWithSourcesChain
 
 
 class Chatbot:

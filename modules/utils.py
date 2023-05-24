@@ -5,7 +5,6 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Qdrant
 
 from modules.chatbot import Chatbot
-from modules.embedder import Embedder
 
 from load import faiss_fetch_vector_store
 from modules.qdrant_util import get_qdrant_client

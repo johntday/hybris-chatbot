@@ -46,8 +46,3 @@ Launch the chat service locally :
 streamlit run hybris-chatbot.py
 ```
 
-Switch to use the local Faiss vector database :
-
-```bash
-TBD
-```
