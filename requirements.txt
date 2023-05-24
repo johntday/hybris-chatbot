@@ -1,4 +1,4 @@
-faiss-cpu==1.7.3
+#faiss-cpu==1.7.3
 langchain==0.0.146
 openai==0.27.4
 pandas==1.5.3
@@ -12,4 +12,4 @@ tiktoken==0.3.3
 
 # supabase==1.0.3
 qdrant_client==1.1.7
-protobuf==4.23.1
+protobuf==3.20.*
