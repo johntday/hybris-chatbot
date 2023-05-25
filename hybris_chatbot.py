@@ -30,31 +30,44 @@ Sidebar = sidebar_module.Sidebar
 uploaded_file = {'name': 'Hybris', 'type': 'text/csv', 'size': 0}
 
 
-def init():
-    load_dotenv()
-    st.set_page_config(layout="wide", page_icon="💬", page_title="Hybris ChatBot")
-
-    if not st.session_state.get("chatbot"):
-        st.session_state["model"] = os.environ.get("LLM_MODEL", "gpt-3.5-turbo")
-        st.session_state["temperature"] = 0.0
-        chatbot = Utilities.setup_chatbot(
-            uploaded_file, st.session_state["model"], st.session_state["temperature"]
-        )
-        st.session_state["ready"] = True
-        st.session_state["chatbot"] = chatbot
+# def init():
+#     load_dotenv()
+#     st.set_page_config(layout="wide", page_icon="💬", page_title="Hybris ChatBot")
+#     user_api_key = Utilities.load_api_key()
+#
+#     if not st.session_state.get("chatbot"):
+#         st.session_state["model"] = os.environ.get("LLM_MODEL", "gpt-3.5-turbo")
+#         st.session_state["temperature"] = 0.0
+#         chatbot = Utilities.setup_chatbot(
+#             uploaded_file, st.session_state["model"], st.session_state["temperature"]
+#         )
+#         st.session_state["ready"] = True
+#         st.session_state["chatbot"] = chatbot
 
 
 def main():
-    init()
+    app_name = os.getenv("APP_NAME", "Hybris ChatBot")
+    st.set_page_config(layout="wide", page_icon="💬", page_title="Hybris ChatBot")
+    load_dotenv()
     layout, sidebar, utils = Layout(), Sidebar(), Utilities()
     layout.show_header()
-    user_api_key = utils.load_api_key()
-    app_name = os.getenv("APP_NAME", "Hybris ChatBot")
+
+    user_api_key = Utilities.load_api_key()
 
     if not user_api_key:
         layout.show_api_key_missing()
     else:
         os.environ["OPENAI_API_KEY"] = user_api_key
+
+        if not st.session_state.get("chatbot"):
+            st.session_state["model"] = os.environ.get("LLM_MODEL", "gpt-3.5-turbo")
+            st.session_state["temperature"] = 0.0
+            chatbot = Utilities.setup_chatbot(
+                uploaded_file, st.session_state["model"], st.session_state["temperature"]
+            )
+            st.session_state["ready"] = True
+            st.session_state["chatbot"] = chatbot
+
         # uploaded_file = utils.handle_upload()
 
         if uploaded_file:

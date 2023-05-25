@@ -18,9 +18,9 @@ class Utilities:
         """
         if os.path.exists(".env") and os.environ.get("OPENAI_API_KEY") is not None:
             user_api_key = os.environ["OPENAI_API_KEY"]
-            st.sidebar.success("API key loaded from .env", icon="🚀")
-        elif st.secrets["OPENAI_API_KEY"]:
-            user_api_key = st.secrets["OPENAI_API_KEY"]
+            st.sidebar.success("API key loaded", icon="🚀")
+        # elif st.secrets["OPENAI_API_KEY"]:
+        #     user_api_key = st.secrets["OPENAI_API_KEY"]
         else:
             user_api_key = st.sidebar.text_input(
                 label="#### Your OpenAI API key 👇", placeholder="Paste your openAI API key, sk-", type="password"
@@ -59,7 +59,6 @@ class Utilities:
         """
         Sets up the chatbot with the uploaded file, model, and temperature
         """
-        # embeds = Embedder()
         with st.spinner("Processing..."):
             # uploaded_file.seek(0)
             # file = uploaded_file.read()
@@ -76,5 +75,4 @@ class Utilities:
 
             # vectors = embeds.getDocEmbeds(file, uploaded_file.name)
             chatbot = Chatbot(model, temperature, vectors)
-        st.session_state["ready"] = True
         return chatbot
