@@ -163,3 +163,4 @@ cython_debug/
 /playground.py
 /.streamlit/secrets.toml
 streamlit.txt
+/modules/faiss_util.py

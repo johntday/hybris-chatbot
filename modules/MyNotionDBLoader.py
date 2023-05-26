@@ -106,7 +106,7 @@ class MyNotionDBLoader(BaseLoader):
             query_dict["start_cursor"] = data.get("next_cursor")
 
         page_ids = [page["id"] for page in pages]
-        print(f"Found {len(page_ids)} pages in Notion database {self.database_id}")
+        print(f"Found {len(page_ids)} pages in Notion database {self.database_id}\n")
 
         return page_ids
 
@@ -182,11 +182,11 @@ class MyNotionDBLoader(BaseLoader):
         metadata_filtered = dict(filter(metadata_filter, metadata.items()))
 
         if is_pdf:
-            print(f"\n\nLoading PDF '{metadata}'")
+            print(f"Loading PDF '{metadata}'")
             docs = _get_pdf_content(page_content, page_id)
             return [Document(page_content=doc.page_content, metadata=metadata_filtered) for doc in docs]
         else:
-            print(f"\n\nLoading Notion Page '{metadata}'")
+            print(f"Loading Notion Page '{metadata}'")
 
         return [Document(page_content=page_content, metadata=metadata_filtered)]
 

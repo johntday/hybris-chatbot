@@ -1,19 +1,14 @@
-from qdrant_client import QdrantClient
 import os
 
 from dotenv import load_dotenv
-import shutil
-
-from dotenv import load_dotenv
-from langchain.document_loaders import PyPDFLoader
-from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS, SupabaseVectorStore, Qdrant
 from typing import List
 from langchain.docstore.document import Document
+from qdrant_client import QdrantClient
+
 from modules.MyNotionDBLoader import MyNotionDBLoader
-from pathlib import Path
 
 
 def load_notion_documents(notion_token, notion_database_id) -> List[Document]:
@@ -102,7 +97,7 @@ def reload_qdrant():
     print("Finished loading documents to Qdrant")
 
 
-if __name__ == '__main__':
+def qdrant_test():
     load_dotenv()
 
     q_client = get_qdrant_client(os.getenv("QDRANT_URL"), os.getenv("QDRANT_API_KEY"))
@@ -126,3 +121,7 @@ if __name__ == '__main__':
     found_doc, score = found_docs[0]
     print(found_doc)
     print(f"Score: {score}")
+
+
+if __name__ == '__main__':
+    reload_qdrant()
