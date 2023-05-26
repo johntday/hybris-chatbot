@@ -40,12 +40,12 @@ def split_documents(documents) -> List[Document]:
 def replace_non_ascii(doc: Document) -> Document:
     """
     Replaces non-ascii characters with ascii characters
-    str = "This is Python \u200ctutorial"
-    str_en = str.encode("ascii", "ignore")
-    str_de = str_en.decode()
-    print(str_de)
     """
-    page_content = doc.page_content.replace("\ue05c", "fi").replace("\x00", "").replace('\u0000', '')
+    page_content = doc.page_content \
+        .replace("\ue05c", "fi") \
+        .replace("\ufb01", "fi") \
+        .replace("\x00", "") \
+        .replace('\u0000', '')
     page_content_ascii = page_content.encode("ascii", "ignore").decode()
     # output = ''.join([i if ord(i) < 128 else ' ' for i in page_content_ascii])
     return Document(page_content=page_content_ascii, metadata=doc.metadata)
@@ -64,6 +64,7 @@ def recreate_collection(q_client: QdrantClient) -> None:
     from qdrant_client.http import models
 
     q_client.recreate_collection(
+        # https://qdrant.tech/documentation/how_to/#prefer-high-precision-with-high-speed-search
         collection_name="hybris",
         vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
         optimizers_config=models.OptimizersConfigDiff(memmap_threshold=20000),
@@ -76,42 +77,30 @@ def recreate_collection(q_client: QdrantClient) -> None:
     )
 
 
-# if __name__ == '__main__':
-#     load_dotenv()
-#
-#     NOTION_TOKEN = os.getenv("NOTION_TOKEN")
-#     NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
-#     docs = load_notion_documents(notion_token=NOTION_TOKEN, notion_database_id=NOTION_DATABASE_ID)
-#     doc_chunks = split_documents(docs)
-#
-#     q_client = get_qdrant_client(os.getenv("QDRANT_URL"), os.getenv("QDRANT_API_KEY"))
-#     recreate_collection(q_client)
-#
-#     # collection_info = q_client.get_collection(collection_name=os.getenv("QDRANT_COLLECTION_NAME"))
-#     # print(f"\nCollection info: {collection_info}")
-#
-#     print("\nStart loading documents to Qdrant...")
-#     qdrant = Qdrant.from_documents(
-#         documents=doc_chunks,
-#         embedding=OpenAIEmbeddings(),
-#         url=os.getenv("QDRANT_URL"),
-#         prefer_grpc=True,
-#         api_key=os.getenv("QDRANT_API_KEY"),
-#         collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
-#     )
-#     print("Finished loading documents to Qdrant")
-#
-#     # test
-#     query = "What is Intelligent Selling Services?"
-#     found_docs = qdrant.similarity_search_with_score(query)
-#     found_doc, score = found_docs[0]
-#     print(found_doc)
-#     print(f"\nScore: {score}")
-#
-#     qdrant.similarity_search_with_score(query, filter={"source id": "hybrismart"})
-#     found_doc, score = found_docs[0]
-#     print(found_doc)
-#     print(f"\nScore: {score}")
+def reload_qdrant():
+    load_dotenv()
+
+    docs = load_notion_documents(notion_token=os.getenv("NOTION_TOKEN"),
+                                 notion_database_id=os.getenv("NOTION_DATABASE_ID"))
+    doc_chunks = split_documents(docs)
+
+    q_client = get_qdrant_client(os.getenv("QDRANT_URL"), os.getenv("QDRANT_API_KEY"))
+    recreate_collection(q_client)
+
+    # collection_info = q_client.get_collection(collection_name=os.getenv("QDRANT_COLLECTION_NAME"))
+    # print(f"\nCollection info: {collection_info}")
+
+    print("\nStart loading documents to Qdrant...")
+    Qdrant.from_documents(
+        documents=doc_chunks,
+        embedding=OpenAIEmbeddings(),
+        url=os.getenv("QDRANT_URL"),
+        prefer_grpc=True,
+        api_key=os.getenv("QDRANT_API_KEY"),
+        collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
+    )
+    print("Finished loading documents to Qdrant")
+
 
 if __name__ == '__main__':
     load_dotenv()
