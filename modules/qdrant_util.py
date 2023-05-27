@@ -72,7 +72,7 @@ def recreate_collection(q_client: QdrantClient) -> None:
     )
 
 
-def reload_qdrant():
+def load_qdrant(args):
     load_dotenv()
 
     docs = load_notion_documents(notion_token=os.getenv("NOTION_TOKEN"),
@@ -80,21 +80,42 @@ def reload_qdrant():
     doc_chunks = split_documents(docs)
 
     q_client = get_qdrant_client(os.getenv("QDRANT_URL"), os.getenv("QDRANT_API_KEY"))
-    recreate_collection(q_client)
 
-    # collection_info = q_client.get_collection(collection_name=os.getenv("QDRANT_COLLECTION_NAME"))
-    # print(f"\nCollection info: {collection_info}")
+    if args.reset:
+        print("\nStart recreating Qdrant collection...")
+        recreate_collection(q_client)
+        print("Finished recreating Qdrant collection")
+
+    if args.verbose:
+        collection_info = q_client.get_collection(collection_name=os.getenv("QDRANT_COLLECTION_NAME"))
+        print(f"\nCollection info: {collection_info.json()}")
+
+    vectors = Qdrant(
+        client=q_client,
+        collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
+        embedding_function=OpenAIEmbeddings().embed_query,
+    )
 
     print("\nStart loading documents to Qdrant...")
-    Qdrant.from_documents(
-        documents=doc_chunks,
-        embedding=OpenAIEmbeddings(),
-        url=os.getenv("QDRANT_URL"),
-        prefer_grpc=True,
-        api_key=os.getenv("QDRANT_API_KEY"),
-        collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
-    )
+
+    CHUNK_SIZE = 50
+    print(f"Number of documents: {len(doc_chunks)}")
+    doc_chunks_list = [doc_chunks[i:i + CHUNK_SIZE] for i in range(0, len(doc_chunks), CHUNK_SIZE)]
+    print(f"Number of batches: {len(doc_chunks_list)}")
+
+    for j in range(0, len(doc_chunks_list)):
+        print(f"Loading batch number {j + 1}...")
+
+        Qdrant.add_documents(
+            self=vectors,
+            documents=doc_chunks_list[j],
+        )
+
     print("Finished loading documents to Qdrant")
+
+    if args.verbose:
+        collection_info = q_client.get_collection(collection_name=os.getenv("QDRANT_COLLECTION_NAME"))
+        print(f"\nCollection info: {collection_info.json()}")
 
 
 def qdrant_test():
@@ -122,6 +143,3 @@ def qdrant_test():
     print(found_doc)
     print(f"Score: {score}")
 
-
-if __name__ == '__main__':
-    reload_qdrant()
