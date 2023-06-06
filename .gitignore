@@ -164,3 +164,4 @@ cython_debug/
 /.streamlit/secrets.toml
 streamlit.txt
 /modules/faiss_util.py
+.DS_Store
