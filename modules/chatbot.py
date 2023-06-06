@@ -38,7 +38,7 @@ class Chatbot:
             llm=ChatOpenAI(model_name=self.model_name, temperature=self.temperature),
             # condense_question_prompt=self.CONDENSE_QUESTION_PROMPT,
             # qa_prompt=self.QA_PROMPT,
-            retriever=self.vectors.as_retriever(),
+            retriever=self.vectors.as_retriever(search_type="mmr"),
             return_source_documents=True,
         )
         # my_chain = RetrievalQAWithSourcesChain.from_chain_type(
