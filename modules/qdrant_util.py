@@ -7,6 +7,7 @@ from langchain.vectorstores import FAISS, SupabaseVectorStore, Qdrant
 from typing import List
 from langchain.docstore.document import Document
 from qdrant_client import QdrantClient
+from qdrant_client.http import models
 
 from modules.MyNotionDBLoader import MyNotionDBLoader
 
@@ -56,7 +57,6 @@ def get_qdrant_client(url: str, api_key: str) -> QdrantClient:
 
 
 def recreate_collection(q_client: QdrantClient) -> None:
-    from qdrant_client.http import models
 
     q_client.recreate_collection(
         # https://qdrant.tech/documentation/how_to/#prefer-high-precision-with-high-speed-search
