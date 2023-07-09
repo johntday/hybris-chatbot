@@ -9,7 +9,7 @@ from langchain.docstore.document import Document
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 
-from modules.MyNotionDBLoader import MyNotionDBLoader
+from mods.MyNotionDBLoader import MyNotionDBLoader
 
 
 def load_notion_documents(notion_token, notion_database_id) -> List[Document]:
@@ -93,7 +93,8 @@ def load_qdrant(args):
     vectors = Qdrant(
         client=q_client,
         collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
-        embedding_function=OpenAIEmbeddings().embed_query,
+        # embedding_function=OpenAIEmbeddings().embed_query,
+        embeddings=OpenAIEmbeddings(),
     )
 
     print("\nStart loading documents to Qdrant...")
@@ -126,7 +127,8 @@ def qdrant_test():
     qdrant = Qdrant(
         client=q_client,
         collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
-        embedding_function=OpenAIEmbeddings().embed_query,
+        # embedding_function=OpenAIEmbeddings().embed_query,
+        embeddings=OpenAIEmbeddings(),
     )
 
     # test

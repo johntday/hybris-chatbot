@@ -4,9 +4,9 @@ import streamlit as st
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Qdrant
 
-from modules.chatbot import Chatbot
+from mods.chatbot import Chatbot
 
-from modules.qdrant_util import get_qdrant_client
+from mods.qdrant_util import get_qdrant_client
 
 
 class Utilities:
@@ -70,7 +70,8 @@ class Utilities:
             vectors = Qdrant(
                 client=q_client,
                 collection_name=os.getenv("QDRANT_COLLECTION_NAME"),
-                embedding_function=OpenAIEmbeddings().embed_query,
+                # embedding_function=OpenAIEmbeddings().embed_query,
+                embeddings=OpenAIEmbeddings(),
             )
 
             # vectors = embeds.getDocEmbeds(file, uploaded_file.name)

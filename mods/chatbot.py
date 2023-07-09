@@ -2,6 +2,7 @@ import streamlit as st
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts.prompt import PromptTemplate
+from langchain.chains.conversational_retrieval import prompts
 
 
 class Chatbot:
@@ -16,7 +17,9 @@ class Chatbot:
 
     Question: {question}
     """
-    QA_PROMPT = PromptTemplate(template=qa_template, input_variables=["question", "chat_history"])
+    context = """SAP Commerce Cloud (Hybris) is the world's leading B2C and B2B commerce solution. 
+    SAP Commerce Cloud is a multi-tenant, cloud-based commerce platform that empowers brands to create intelligent, 
+    unified buying experiences across all channels — mobile, social, web, and store."""
 
     def __init__(self, model_name, temperature, vectors, search_type="similarity", k=4):
         self.model_name = model_name
@@ -29,23 +32,23 @@ class Chatbot:
         """
         Starts a conversational chat with a model via Langchain
         """
+        prompt_template = PromptTemplate(template=self.qa_template, input_variables=["question", "chat_history"])
+
         # fixme: https://stackoverflow.com/questions/76178954/giving-systemmessage-context-to-conversationalretrievalchain-and-conversationbuf
+        # chain = load_qa_with_sources_chain(
+        #     llm=ChatOpenAI(model_name=self.model_name, temperature=self.temperature),
+        #     prompt=prompt_template,
+        #     retriever=self.vectors.as_retriever(search_type=self.search_type),
+        #     return_source_documents=True,
+        # )
+
         chain = ConversationalRetrievalChain.from_llm(
             llm=ChatOpenAI(model_name=self.model_name, temperature=self.temperature),
-            qa_prompt=self.QA_PROMPT,
             retriever=self.vectors.as_retriever(search_type=self.search_type),
             return_source_documents=True,
         )
-        # my_chain = RetrievalQAWithSourcesChain.from_chain_type(
-        #     llm=OpenAI(model_name=self.model_name, temperature=self.temperature),
-        #     # condense_question_prompt=self.CONDENSE_QUESTION_PROMPT,
-        #     # qa_prompt=self.QA_PROMPT,
-        #     retriever=self.vectors.as_retriever(),
-        # )
-        # my_chain_result = my_chain({"question": query, "chat_history": st.session_state["history"]})
-        # print(my_chain_result)
 
-        result = chain({"question": query, "chat_history": st.session_state["history"]})
+        result = chain({"question": query, "context": self.context, "chat_history": st.session_state["history"]})
         # print("source_documents: " + result['source_documents'])
         # print(*result['source_documents'], sep="\n\n")
 

@@ -1,10 +1,10 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from modules.history import ChatHistory
-from modules.layout import Layout
-from modules.utils import Utilities
-from modules.sidebar import Sidebar
+from mods.history import ChatHistory
+from mods.layout import Layout
+from mods.utils import Utilities
+from mods.sidebar import Sidebar
 
 
 # To be able to update the changes made to modules in localhost,
@@ -17,10 +17,10 @@ def reload_module(module_name):
     return sys.modules[module_name]
 
 
-history_module = reload_module('modules.history')
-layout_module = reload_module('modules.layout')
-utils_module = reload_module('modules.utils')
-sidebar_module = reload_module('modules.sidebar')
+history_module = reload_module('mods.history')
+layout_module = reload_module('mods.layout')
+utils_module = reload_module('mods.utils')
+sidebar_module = reload_module('mods.sidebar')
 
 ChatHistory = history_module.ChatHistory
 Layout = layout_module.Layout
